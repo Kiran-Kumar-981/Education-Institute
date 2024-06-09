@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Details</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body class="container">
+    <header>
+        <h1>My-Institute</h1>
+    </header>
+    <h2>Enquery Details</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Qualification</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Course</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .students}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.Qualification}}</td>
+                <td>{{.Email}}</td>
+                <td>{{.PhNumber}}</td>
+                <td>{{.Course}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</body>
+
+</html>
