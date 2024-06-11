@@ -69,9 +69,9 @@ func main() {
 		authorized.GET("/home", home)
 		authorized.GET("/admissionForm", admissionForm)
 		authorized.GET("/admissionFormSubmitting", func(ctx *gin.Context) {
-			if admissions(ctx) {
-				ctx.Request.URL.Path = "/DetailsSubmited"
-			}
+			go admissions(ctx)
+				ctx.Redirect(http.StatusPermanentRedirect ,"/DetailsSubmited")
+			
 		})
 		authorized.GET("/viewstudent", viewStudent)
 		authorized.GET("/DetailsSubmited", detailsSubmited)
@@ -115,9 +115,9 @@ func enqueryForm(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "enqueryForm.html", nil)
 }
 func enqueryFormSubmitting(ctx *gin.Context) {
-	if enquery(ctx) {
-		ctx.Redirect(http.StatusFound, "/DetailsSubmited")
-	}
+	go enquery(ctx) 
+		ctx.Redirect(http.StatusPermanentRedirect, "/DetailsEnqSubmited")
+	
 }
 func admissions(ctx *gin.Context) bool {
 	var userData UserData
