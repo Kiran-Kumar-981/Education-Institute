@@ -70,15 +70,18 @@ func main() {
 		authorized.GET("/admissionForm", admissionForm)
 		authorized.GET("/admissionFormSubmitting", func(ctx *gin.Context) {
 			go admissions(ctx)
-				ctx.Redirect(http.StatusPermanentRedirect ,"/DetailsSubmited")
-			
+			ctx.Redirect(http.StatusPermanentRedirect, "/DetailsSubmited")
 		})
 		authorized.GET("/viewstudent", viewStudent)
 		authorized.GET("/DetailsSubmited", detailsSubmited)
 		authorized.GET("/PayFee", payFee)
 		authorized.GET("/enqueryForm", enqueryForm)
-		authorized.POST("/enqueryformsubmiting", enqueryFormSubmitting)
+		authorized.POST("/enqueryformsubmiting", func(ctx *gin.Context) {
+			go enquery(ctx)
+			ctx.Redirect(http.StatusPermanentRedirect, "/DetailsEnqSubmited")
+		})
 		authorized.GET("/enqueryviewstudent", enqueryViewStudent)
+		authorized.GET("/DetailsEnqSubmited", detailsEnqSubmited)
 		authorized.GET("/logout", logout)
 	}
 
@@ -106,7 +109,9 @@ func viewStudent(ctx *gin.Context) {
 func detailsSubmited(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "inserted.html", nil)
 }
-
+func detailsEnqSubmited(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "DetailsEnqSubmited.html", nil)
+}
 func payFee(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "PayFee.html", nil)
 }
@@ -114,22 +119,24 @@ func payFee(ctx *gin.Context) {
 func enqueryForm(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "enqueryForm.html", nil)
 }
-func enqueryFormSubmitting(ctx *gin.Context) {
-	go enquery(ctx) 
+
+/*
+	func enqueryFormSubmitting(ctx *gin.Context) {
+		go enquery(ctx)
 		ctx.Redirect(http.StatusPermanentRedirect, "/DetailsEnqSubmited")
-	
-}
-func admissions(ctx *gin.Context) bool {
+	}
+*/
+func admissions(ctx *gin.Context) {
 	var userData UserData
 	if err := ctx.ShouldBind(&userData); err != nil {
 		ctx.HTML(http.StatusBadRequest, "insertionfailed.html", nil)
-		return false
+		return
 	}
 
 	statement, err := dataBase.Prepare("INSERT INTO students(Name, FatherName, Qualification, Email, PhNumber, Course, Address, Duration, Fee, BatchTiming, FeePaid) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		fmt.Println("Prepare error:", err)
-		return false
+		return
 	}
 	defer statement.Close()
 
@@ -137,11 +144,10 @@ func admissions(ctx *gin.Context) bool {
 	if err != nil {
 		fmt.Println("Exec error:", err)
 		ctx.HTML(http.StatusInternalServerError, "insertionfailed.html", nil)
-		return false
+		return
 	}
 
 	ctx.HTML(http.StatusOK, "inserted.html", nil)
-	return true
 }
 
 func login(ctx *gin.Context) {
@@ -174,19 +180,19 @@ func logout(ctx *gin.Context) {
 	ctx.Redirect(http.StatusSeeOther, "/")
 }
 
-func enquery(ctx *gin.Context) bool {
+func enquery(ctx *gin.Context) {
 	var enqueryData EnqueryData
 	if err := ctx.ShouldBind(&enqueryData); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
-		return false
+		return
 	}
 
 	statement, err := dataBase.Prepare("INSERT INTO enqueries(Name, Qualification, Email, PhNumber, Course) VALUES(?,?,?,?,?)")
 	if err != nil {
 		fmt.Println("Prepare error:", err)
-		return false
+		return
 	}
 	defer statement.Close()
 
@@ -194,11 +200,10 @@ func enquery(ctx *gin.Context) bool {
 	if err != nil {
 		fmt.Println("Exec error:", err)
 		ctx.HTML(http.StatusInternalServerError, "insertionfailed.html", nil)
-		return false
+		return
 	}
 
 	ctx.HTML(http.StatusOK, "inserted.html", nil)
-	return true
 }
 
 func enqueryViewStudent(ctx *gin.Context) {
