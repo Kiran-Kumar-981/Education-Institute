@@ -120,12 +120,6 @@ func enqueryForm(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "enqueryForm.html", nil)
 }
 
-/*
-	func enqueryFormSubmitting(ctx *gin.Context) {
-		go enquery(ctx)
-		ctx.Redirect(http.StatusPermanentRedirect, "/DetailsEnqSubmited")
-	}
-*/
 func admissions(ctx *gin.Context) {
 	var userData UserData
 	if err := ctx.ShouldBind(&userData); err != nil {
