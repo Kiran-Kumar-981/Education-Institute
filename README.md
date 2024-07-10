@@ -1,6 +1,11 @@
 
 #Gin Framework Web Application
 
+### Prerequisites
+
+- Go (version 1.13 or later)
+- MySQL database
+
 This is a web application built using the Gin framework and MySQL database. The application provides various routes for user authentication, admission forms, enquery forms, and student data management.
 
 #Features
